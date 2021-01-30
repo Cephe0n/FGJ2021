@@ -1,12 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DarkTonic.MasterAudio;
 
 public class PlayerAttacks : MonoBehaviour
 {
-    public Animator SwordAnim;
+    public Animator SwordAnim, FistAnim;
 
-    public float SwingCD;
+    public float SwingCD, FistCD;
+
+    public GameObject Sword;
 
     BoxCollider swordCollider;
 
@@ -17,26 +20,47 @@ public class PlayerAttacks : MonoBehaviour
 
     private void Start()
     {
-        swordCollider = transform.GetChild(0).GetComponent<BoxCollider>();
-        swordTrail = transform.GetChild(0).GetComponent<TrailRenderer>();
+        swordCollider = Sword.GetComponent<BoxCollider>();
+        swordTrail = Sword.GetComponent<TrailRenderer>();
     }
 
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0) && swingReady)
+        if (swingReady)
         {
-            swingReady = false;
-            SwordAnim.SetTrigger("HorSwing");
-            
-            StartCoroutine(ResetAnim());
+            if (Input.GetMouseButtonDown(0))
+            {
+                swingReady = false;
+                MasterAudio.PlaySound3DAtTransformAndForget("SwordWhoosh1", transform);
+                SwordAnim.SetTrigger("HorSwing");
+
+                StartCoroutine(ResetSwing(SwingCD));
+            }
+
+            if (Input.GetMouseButtonDown(1))
+            {
+                swingReady = false;
+                MasterAudio.PlaySound3DAtTransformAndForget("SwordWhoosh1", transform);
+                SwordAnim.SetTrigger("VerSwing");
+
+                StartCoroutine(ResetSwing(SwingCD));
+            }
+
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                swingReady = false;
+                MasterAudio.PlaySound3DAtTransformAndForget("PunchWhoosh1", transform);
+                FistAnim.SetTrigger("Punch");
+                StartCoroutine(ResetSwing(FistCD));
+            }
         }
     }
 
-    IEnumerator ResetAnim()
+    IEnumerator ResetSwing(float pCD)
     {
-        yield return new WaitForSeconds(SwingCD);
+        yield return new WaitForSeconds(pCD);
         swingReady = true;
 
     }
