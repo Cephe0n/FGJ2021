@@ -8,6 +8,8 @@ public class Sword : MonoBehaviour
 
     Animator anim;
 
+    public ParticleSystem EnemyHit, WallHit;
+
     public int Damage;
 
     PlayerHealth playerHP;
@@ -24,15 +26,17 @@ public class Sword : MonoBehaviour
     {
         if (other.gameObject.CompareTag("SwordBounceObj"))
         {
-        MasterAudio.PlaySound3DAtTransformAndForget("SwordClash", transform);
-        anim.SetTrigger("HitBounce");
+            WallHit.Play();
+            MasterAudio.PlaySound3DAtTransformAndForget("SwordClash", transform);
+            anim.SetTrigger("HitBounce");
         }
         else if (other.gameObject.CompareTag("EnemyHitSpot"))
         {
-        MasterAudio.PlaySound3DAtTransformAndForget("SwordHit1", transform);
-        other.GetComponent<Enemies>().TakeDamage(Damage);
-        if (playerHP.Health < playerHP.maxHealth)
-        playerHP.Health += 1;
+            EnemyHit.Play();
+            MasterAudio.PlaySound3DAtTransformAndForget("SwordHit1", transform);
+            other.GetComponent<Enemies>().TakeDamage(Damage);
+            if (playerHP.Health < playerHP.maxHealth)
+                playerHP.Health += 1;
         }
 
     }

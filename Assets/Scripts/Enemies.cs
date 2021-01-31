@@ -22,6 +22,7 @@ public class Enemies : MonoBehaviour
     {
         nav = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
+        Target = GameObject.FindGameObjectWithTag("Player");
     }
 
     // Update is called once per frame
@@ -52,9 +53,11 @@ public class Enemies : MonoBehaviour
 
     }
 
-    void Death()
+    protected virtual void Death()
     {
+        GameControl.Instance.EnemiesKilled++;
+        MasterAudio.StopAllSoundsOfTransform(transform);
         MasterAudio.PlaySound3DAtTransformAndForget("DeathMeleeEnemy", transform);
-        Destroy(gameObject, 1f);
+        gameObject.SetActive(false);
     }
 }

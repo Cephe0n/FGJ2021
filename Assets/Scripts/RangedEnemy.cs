@@ -9,6 +9,7 @@ public class RangedEnemy : Enemies
 
     public float ChargeTime;
     public int RangedDamage;
+    public ParticleSystem ChargeParticles;
 
     LineRenderer laser;
 
@@ -53,26 +54,32 @@ public class RangedEnemy : Enemies
         laser.positionCount = 2;
         laser.SetPosition(0, ProjectileSpawn.position);
         laser.SetPosition(1, pHit.point);
-        laser.startWidth = 0.2f;
-        laser.endWidth = 0.2f;
+        laser.startWidth = 0.1f;
+        laser.endWidth = 0.1f;
         MasterAudio.PlaySound3DAtTransformAndForget("ChargeFire", ProjectileSpawn.transform);
         yield return new WaitForSeconds(ChargeTime);
+        ChargeParticles.Play();
         laser.startWidth = 1f;
         laser.endWidth = 1f;
 
         RaycastHit hit;
-        if (Physics.Raycast(laser.GetPosition(0), laser.GetPosition(1), out hit, AttackDistance))
+        if (Physics.Linecast(laser.GetPosition(0), laser.GetPosition(1), out hit))
         {
             if (hit.collider.CompareTag("Player"))
                 hit.collider.gameObject.GetComponent<PlayerHealth>().TakeDamage(RangedDamage);
         }
 
-        float cd = Random.Range(AttackCD, AttackCD+2f);
+        float cd = Random.Range(AttackCD, AttackCD+1f);
 
-        yield return new WaitForSeconds(cd);
+        yield return new WaitForSeconds(0.3f);
         laser.positionCount = 0;
+        yield return new WaitForSeconds(cd);
         attacking = false;
+    }
 
-
+    protected override void Death()
+    {
+        laser.positionCount = 0;
+        base.Death();
     }
 }
